@@ -49,14 +49,19 @@ bool TitleState::frameStarted(GameManager* game, const FrameEvent& evt)
 
 bool TitleState::frameEnded(GameManager* game, const FrameEvent& evt)
 {
-  return mContinue;
+	return mContinue;
 }
 
 bool TitleState::keyPressed(GameManager* game, const OIS::KeyEvent &e)
 {
-  // Fill Here -------------------------------------------------------
-
-  // -----------------------------------------------------------------
-
-  return true;
+	switch (e.key)
+	{
+	case OIS::KC_SPACE:
+		game->changeState(PlayState::getInstance());
+		break;
+	case OIS::KC_ESCAPE:
+		mContinue = false;
+		break;
+	}
+	return true;
 }

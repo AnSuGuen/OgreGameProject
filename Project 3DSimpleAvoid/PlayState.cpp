@@ -43,9 +43,8 @@ void PlayState::enter(void)
 
 void PlayState::exit(void)
 {
-  // Fill Here -----------------------------
-
-  // ---------------------------------------
+	mSceneMgr->clearScene();
+	mInformationOverlay->hide();
 }
 
 void PlayState::pause(void)
@@ -93,11 +92,13 @@ bool PlayState::keyReleased(GameManager* game, const OIS::KeyEvent &e)
 
 bool PlayState::keyPressed(GameManager* game, const OIS::KeyEvent &e)
 {
-  // Fill Here -------------------------------------------
-
-  // -----------------------------------------------------
-
-  return true;
+	switch (e.key)
+	{
+	case OIS::KC_ESCAPE:
+		game->changeState(TitleState::getInstance());
+		break;
+	}
+	return true;
 }
 
 bool PlayState::mousePressed(GameManager* game, const OIS::MouseEvent &e, OIS::MouseButtonID id)
