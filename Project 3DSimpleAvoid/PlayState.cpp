@@ -25,9 +25,9 @@ void PlayState::enter(void)
   mCharacterRoot = mSceneMgr->getRootSceneNode()->createChildSceneNode("ProfessorRoot");
   mCharacterYaw = mCharacterRoot->createChildSceneNode("ProfessorYaw");
 
-  mCameraYaw = mCharacterRoot->createChildSceneNode("CameraYaw", Vector3(0.0f, 120.0f, 0.0f));
+  mCameraYaw = mCharacterRoot->createChildSceneNode("CameraYaw", Vector3(0.0f, 0.0f, 0.0f));
   mCameraPitch = mCameraYaw->createChildSceneNode("CameraPitch");
-  mCameraHolder = mCameraPitch->createChildSceneNode("CameraHolder", Vector3(0.0f, 80.0f, 500.0f));
+  mCameraHolder = mCameraPitch->createChildSceneNode("CameraHolder", Vector3(0.0f, 700.0f, 1300.0f));
 
   mCharacterEntity = mSceneMgr->createEntity("Professor", "DustinBody.mesh");
   mCharacterYaw->attachObject(mCharacterEntity);
@@ -114,10 +114,10 @@ bool PlayState::mouseReleased(GameManager* game, const OIS::MouseEvent &e, OIS::
 
 bool PlayState::mouseMoved(GameManager* game, const OIS::MouseEvent &e)
 { 
-  mCameraYaw->yaw(Degree(-e.state.X.rel));
-  mCameraPitch->pitch(Degree(-e.state.Y.rel));
+  //mCameraYaw->yaw(Degree(-e.state.X.rel));
+  //mCameraPitch->pitch(Degree(-e.state.Y.rel));
 
-  mCameraHolder->translate(Ogre::Vector3(0, 0, -e.state.Z.rel * 0.1f));
+  //mCameraHolder->translate(Ogre::Vector3(0, 0, -e.state.Z.rel * 0.1f));
   return true;
 }
 
@@ -141,7 +141,7 @@ void PlayState::_drawGroundPlane(void)
     "Ground", 
     ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
     plane,
-    500,500,
+    1000,1000,
     1,1,
     true,1,5,5,
     Vector3::NEGATIVE_UNIT_Z
@@ -149,7 +149,7 @@ void PlayState::_drawGroundPlane(void)
 
   Entity* groundEntity = mSceneMgr->createEntity("GroundPlane", "Ground" );
   mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
-  groundEntity->setMaterialName("KPU_LOGO");
+  groundEntity->setMaterialName("Glass");
   groundEntity->setCastShadows(false);
 }
 
