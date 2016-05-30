@@ -2,6 +2,7 @@
 
 #include "GameState.h"
 #include "Player.h"
+#include "Bullet.h"
 
 class PlayState : public GameState
 {
@@ -53,6 +54,13 @@ private:
   Ogre::Overlay* mInformationOverlay;
 
   Player* player;
+  //Bullet* bullet;
+  std::vector<Bullet*> bullet;
+
+  float mStageTime;
+  float mSpawnTime;
+
+  int mBulletNum;
 };
 
 
