@@ -93,14 +93,27 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
 
 bool PlayState::keyReleased(GameManager* game, const OIS::KeyEvent &e)
 {
-  return true;
+	switch (e.key)
+	{
+	case OIS::KC_W: player->keyReleased(game, e); break;
+	case OIS::KC_S: player->keyReleased(game, e); break;
+	case OIS::KC_A: player->keyReleased(game, e); break;
+	case OIS::KC_D: player->keyReleased(game, e); break;
+	}
+
+	return true;
 }
 
 bool PlayState::keyPressed(GameManager* game, const OIS::KeyEvent &e)
 {
 	switch (e.key)
 	{
-	case OIS::KC_ESCAPE:
+	case OIS::KC_W: player->keyPressed(game, e); break;
+	case OIS::KC_S: player->keyPressed(game, e); break;
+	case OIS::KC_A: player->keyPressed(game, e); break;
+	case OIS::KC_D: player->keyPressed(game, e); break;
+
+	case OIS::KC_ESCAPE: 
 		game->changeState(TitleState::getInstance());
 		break;
 	}

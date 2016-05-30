@@ -33,5 +33,6 @@ private:
   bool mContinue;
 
   Ogre::Overlay* mTitleOverlay;
-  Ogre::OverlayElement* mStartMsg;
+  //Ogre::OverlayElement* mStartMsg;
+  Ogre::OverlayElement* mRedBox;
 };
