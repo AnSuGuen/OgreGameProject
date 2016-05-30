@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameState.h"
+#include "Player.h"
 
 class PlayState : public GameState
 {
@@ -49,8 +50,9 @@ private:
 
   Ogre::AnimationState* mAnimationState;
 
-  Ogre::Overlay*           mInformationOverlay;
+  Ogre::Overlay* mInformationOverlay;
 
+  Player* player;
 };
 
 

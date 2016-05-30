@@ -20,25 +20,30 @@ void PlayState::enter(void)
   _drawGroundPlane();
 
   mInformationOverlay = OverlayManager::getSingleton().getByName("Overlay/Information");
-  mInformationOverlay->show(); 
+  mInformationOverlay->show();
 
-  mCharacterRoot = mSceneMgr->getRootSceneNode()->createChildSceneNode("ProfessorRoot");
-  mCharacterYaw = mCharacterRoot->createChildSceneNode("ProfessorYaw");
+  mCharacterRoot = mSceneMgr->getRootSceneNode()->createChildSceneNode("CharacterRoot");
+  //mCharacterYaw = mCharacterRoot->createChildSceneNode("ProfessorYaw");
 
   mCameraYaw = mCharacterRoot->createChildSceneNode("CameraYaw", Vector3(0.0f, 0.0f, 0.0f));
   mCameraPitch = mCameraYaw->createChildSceneNode("CameraPitch");
   mCameraHolder = mCameraPitch->createChildSceneNode("CameraHolder", Vector3(0.0f, 700.0f, 1300.0f));
 
-  mCharacterEntity = mSceneMgr->createEntity("Professor", "DustinBody.mesh");
-  mCharacterYaw->attachObject(mCharacterEntity);
-  mCharacterEntity->setCastShadows(true);
+
+  //mCharacterEntity = mSceneMgr->createEntity("Professor", "DustinBody.mesh");
+  //mCharacterYaw->attachObject(mCharacterEntity);
+  //mCharacterEntity->setCastShadows(true);
 
   mCameraHolder->attachObject(mCamera);
   mCamera->lookAt(mCameraYaw->getPosition());
+  
+  //mAnimationState = mCharacterEntity->getAnimationState("Idle");
+  //mAnimationState->setLoop(true);
+  //mAnimationState->setEnabled(true);
 
-  mAnimationState = mCharacterEntity->getAnimationState("Run");
-  mAnimationState->setLoop(true);
-  mAnimationState->setEnabled(true);
+  player = new Player;
+  player->connectScenegraph(mSceneMgr);
+  player->animationStateSetting();
 }
 
 void PlayState::exit(void)
@@ -57,9 +62,10 @@ void PlayState::resume(void)
 
 bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 {
-  mAnimationState->addTime(evt.timeSinceLastFrame);
-
-  return true;
+  //mAnimationState->addTime(evt.timeSinceLastFrame);
+	player->frameStarted(game, evt);
+	
+	return true;
 }
 
 bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
@@ -116,7 +122,6 @@ bool PlayState::mouseMoved(GameManager* game, const OIS::MouseEvent &e)
 { 
   //mCameraYaw->yaw(Degree(-e.state.X.rel));
   //mCameraPitch->pitch(Degree(-e.state.Y.rel));
-
   //mCameraHolder->translate(Ogre::Vector3(0, 0, -e.state.Z.rel * 0.1f));
   return true;
 }
@@ -149,7 +154,7 @@ void PlayState::_drawGroundPlane(void)
 
   Entity* groundEntity = mSceneMgr->createEntity("GroundPlane", "Ground" );
   mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
-  groundEntity->setMaterialName("Glass");
+  groundEntity->setMaterialName("");
   groundEntity->setCastShadows(false);
 }
 
