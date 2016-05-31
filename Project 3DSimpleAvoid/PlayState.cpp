@@ -26,7 +26,7 @@ void PlayState::enter(void)
 
   mCameraYaw = mCharacterRoot->createChildSceneNode("CameraYaw", Vector3(0.0f, 0.0f, 0.0f));
   mCameraPitch = mCameraYaw->createChildSceneNode("CameraPitch");
-  mCameraHolder = mCameraPitch->createChildSceneNode("CameraHolder", Vector3(0.0f, 700.0f, 1300.0f));
+  mCameraHolder = mCameraPitch->createChildSceneNode("CameraHolder", Vector3(0.0f, 800.0f, 1300.0f));
   
   mCameraHolder->attachObject(mCamera);
   mCamera->lookAt(mCameraYaw->getPosition());
@@ -77,14 +77,14 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			mBulletNum += 1;
 
 			int randDirection = rand() % 4;
-			int randPosition = rand() % 800 - 400;
+			int randPosition = rand() % 500 - 250;
 			Ogre::Vector3 dir;
 			Ogre::Vector3 pos;
 
-			if (LEFT == randDirection){ dir = Ogre::Vector3(1, 0, 0); pos = Ogre::Vector3(-400, 50, randPosition); }
-			else if (RIGHT == randDirection){ dir = Ogre::Vector3(-1, 0, 0); pos = Ogre::Vector3(400, 50, randPosition); }
-			else if (UP == randDirection){ dir = Ogre::Vector3(0, 0, 1);  pos = Ogre::Vector3(randPosition, 50, -400); }
-			else if (DOWN == randDirection){ dir = Ogre::Vector3(0, 0, -1);  pos = Ogre::Vector3(randPosition, 50, 400); }
+			if (LEFT == randDirection){ dir = Ogre::Vector3(1, 0, 0); pos = Ogre::Vector3(-300, 50, randPosition); }
+			else if (RIGHT == randDirection){ dir = Ogre::Vector3(-1, 0, 0); pos = Ogre::Vector3(300, 50, randPosition); }
+			else if (UP == randDirection){ dir = Ogre::Vector3(0, 0, 1);  pos = Ogre::Vector3(randPosition, 50, -300); }
+			else if (DOWN == randDirection){ dir = Ogre::Vector3(0, 0, -1);  pos = Ogre::Vector3(randPosition, 50, 300); }
 
 			bullet.push_back(new Bullet(objname, yawname, entityname, "fish.mesh", dir, pos));
 			bullet.back()->connectScenegraph(mSceneMgr);
@@ -101,23 +101,19 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 	}
 		
 	auto p = std::remove_if(bullet.begin(), bullet.end(), [](Bullet* b) {
-		if (b->mObjectNode->getPosition().z > 1000.0f){ return true; }
-		else if (b->mObjectNode->getPosition().z < -1000.0f){ return true; }
-		else if (b->mObjectNode->getPosition().x > 1000.0f){ return true; }
-		else if (b->mObjectNode->getPosition().x < -1000.0f){ return true; }
+		if (b->mObjectNode->getPosition().z > 2000.0f){ return true; }
+		else if (b->mObjectNode->getPosition().z < -5000.0f){ return true; }
+		else if (b->mObjectNode->getPosition().x > 2000.0f){ return true; }
+		else if (b->mObjectNode->getPosition().x < -2000.0f){ return true; }
 		else return false;
 	});
 
-	for (int i = 0; i < bullet.size(); i++){
-		if (bullet[i]->mObjectNode->getPosition().z > 1000.0f)
-			delete bullet[i]->mObjectEntity;
-		if (bullet[i]->mObjectNode->getPosition().z < -1000.0f)
-			delete bullet[i]->mObjectEntity;
-		if (bullet[i]->mObjectNode->getPosition().x > 1000.0f)
-			delete bullet[i]->mObjectEntity;
-		if (bullet[i]->mObjectNode->getPosition().x < -1000.0f)
-			delete bullet[i]->mObjectEntity;
-	}
+	/*for (int i = 0; i < bullet.size(); i++){
+		if (bullet[i]->mObjectNode->getPosition().z > 500.0f){ delete bullet[i]->mObjectNode; continue;}
+		if (bullet[i]->mObjectNode->getPosition().z < -500.0f){ delete bullet[i]->mObjectNode; continue; }
+		if (bullet[i]->mObjectNode->getPosition().x > 500.0f){ delete bullet[i]->mObjectNode; continue; }
+		if (bullet[i]->mObjectNode->getPosition().x < -500.0f){ delete bullet[i]->mObjectNode; continue; }
+	}*/
 	bullet.erase(p, bullet.end());
 
 	mSpawnTime += evt.timeSinceLastFrame;
