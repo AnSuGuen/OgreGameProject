@@ -35,9 +35,11 @@ void PlayState::enter(void)
   player->connectScenegraph(mSceneMgr);
   player->animationStateSetting();
   
-  mStageTime = 30.0f;
-  mSpawnTime = 0;
+  mStageTime = 15.0f;
+  mSpawnTime = 0.0f;
+  mSpawnTerm = 0;
   mBulletNum = 0;
+  mStageState = 1;
 }
 
 void PlayState::exit(void)
@@ -58,10 +60,18 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 {
 	player->frameStarted(game, evt);
 
-	if (mSpawnTime > 2.0f)
+	if (1 == mStageState){
+		mSpawnTerm = 1.5f;
+	}
+	else if (2 == mStageState){
+		mSpawnTerm = 0.5f;
+	}
+
+	if (mSpawnTime > mSpawnTerm)
 	{
 		for (int i = 0; i < 3; i++)
 		{
+
 #define LEFT 0
 #define RIGHT 1
 #define UP 2
@@ -77,18 +87,18 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			mBulletNum += 1;
 
 			int randDirection = rand() % 4;
-			int randPosition = rand() % 500 - 250;
+			int randPosition = rand() % 1000 - 500;
 			Ogre::Vector3 dir;
 			Ogre::Vector3 pos;
 
-			if (LEFT == randDirection){ dir = Ogre::Vector3(1, 0, 0); pos = Ogre::Vector3(-300, 50, randPosition); }
-			else if (RIGHT == randDirection){ dir = Ogre::Vector3(-1, 0, 0); pos = Ogre::Vector3(300, 50, randPosition); }
-			else if (UP == randDirection){ dir = Ogre::Vector3(0, 0, 1);  pos = Ogre::Vector3(randPosition, 50, -300); }
-			else if (DOWN == randDirection){ dir = Ogre::Vector3(0, 0, -1);  pos = Ogre::Vector3(randPosition, 50, 300); }
+			if (LEFT == randDirection){ dir = Ogre::Vector3(1, 0, 0); pos = Ogre::Vector3(-500.0f, 100, randPosition); }
+			else if (RIGHT == randDirection){ dir = Ogre::Vector3(-1, 0, 0); pos = Ogre::Vector3(500.0f, 100, randPosition); }
+			else if (UP == randDirection){ dir = Ogre::Vector3(0, 0, 1);  pos = Ogre::Vector3(randPosition, 100, -500.0f); }
+			else if (DOWN == randDirection){ dir = Ogre::Vector3(0, 0, -1);  pos = Ogre::Vector3(randPosition, 100, 500.0f); }
 
 			bullet.push_back(new Bullet(objname, yawname, entityname, "fish.mesh", dir, pos));
 			bullet.back()->connectScenegraph(mSceneMgr);
-			bullet.back()->animationStateSetting();
+			//bullet.back()->animationStateSetting();
 			bullet.back()->mObjectYaw->setScale(20, 20, 20);
 			bullet.back()->mObjectYaw->yaw(Degree(90));
 		}
@@ -99,26 +109,34 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 	{
 		bullet[i]->frameStarted(game, evt, player->mObjectNode->getPosition(), 1);
 	}
-		
-	auto p = std::remove_if(bullet.begin(), bullet.end(), [](Bullet* b) {
+
+	/*auto p = std::remove_if(bullet.begin(), bullet.end(), [](Bullet* b) {
 		if (b->mObjectNode->getPosition().z > 2000.0f){ return true; }
 		else if (b->mObjectNode->getPosition().z < -5000.0f){ return true; }
 		else if (b->mObjectNode->getPosition().x > 2000.0f){ return true; }
 		else if (b->mObjectNode->getPosition().x < -2000.0f){ return true; }
 		else return false;
-	});
+		});*/
 
 	/*for (int i = 0; i < bullet.size(); i++){
 		if (bullet[i]->mObjectNode->getPosition().z > 500.0f){ delete bullet[i]->mObjectNode; continue;}
 		if (bullet[i]->mObjectNode->getPosition().z < -500.0f){ delete bullet[i]->mObjectNode; continue; }
 		if (bullet[i]->mObjectNode->getPosition().x > 500.0f){ delete bullet[i]->mObjectNode; continue; }
 		if (bullet[i]->mObjectNode->getPosition().x < -500.0f){ delete bullet[i]->mObjectNode; continue; }
-	}*/
-	bullet.erase(p, bullet.end());
+		}*/
+	//bullet.erase(p, bullet.end());
 
 	mSpawnTime += evt.timeSinceLastFrame;
-	mStageTime -= evt.timeSinceLastFrame;	
-	if (0 > mStageTime) mStageTime = 30.0f;
+	mStageTime -= evt.timeSinceLastFrame;
+	if (0 > mStageTime){
+		for (auto b : bullet){
+			b->mObjectNode->setPosition(1000, 0, 1000);
+			b->mObjectNode->setVisible(false);
+		}
+		bullet.clear();
+		mStageTime = 15.0f;
+		mStageState += 1;
+	}
 	return true;
 }
 
@@ -129,12 +147,16 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   static Ogre::DisplayString bestFps = L"최고 FPS: ";
   static Ogre::DisplayString worstFps = L"최저 FPS: ";
   static Ogre::DisplayString remainTime = L"남은시간: ";
+  static Ogre::DisplayString position = L"Pos : ";
+  static Ogre::DisplayString stage = L"Stage";
 
   OverlayElement* guiAvg = OverlayManager::getSingleton().getOverlayElement("AverageFps");
   OverlayElement* guiCurr = OverlayManager::getSingleton().getOverlayElement("CurrFps");
   OverlayElement* guiBest = OverlayManager::getSingleton().getOverlayElement("BestFps");
   OverlayElement* guiWorst = OverlayManager::getSingleton().getOverlayElement("WorstFps");
   OverlayElement* guiTime = OverlayManager::getSingleton().getOverlayElement("Time");
+  OverlayElement* guiPos = OverlayManager::getSingleton().getOverlayElement("Pos");
+  OverlayElement* guiStage = OverlayManager::getSingleton().getOverlayElement("Stage");
 
   const RenderTarget::FrameStats& stats = mRoot->getAutoCreatedWindow()->getStatistics();
 
@@ -143,6 +165,9 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS));
   guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS));
   guiTime->setCaption(remainTime + StringConverter::toString(mStageTime));
+  guiPos->setCaption(position + StringConverter::toString(player->mObjectNode->getPosition().x)
+	  + "  " + StringConverter::toString(player->mObjectNode->getPosition().z));
+  guiStage->setCaption(stage + StringConverter::toString(mStageState));
 
   return true;
 }

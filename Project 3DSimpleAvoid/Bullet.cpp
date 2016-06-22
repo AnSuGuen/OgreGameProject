@@ -35,4 +35,9 @@ void Bullet::frameStarted(GameManager* game, const Ogre::FrameEvent& evt, Ogre::
 	mObjectYaw->setOrientation(mQuat);
 	mObjectYaw->yaw(Ogre::Degree(90));
 	mObjectNode->translate(mDirection.normalisedCopy() * mSpeed * evt.timeSinceLastFrame);
+
+	if (mObjectNode->getPosition().z > 500.0f){ mObjectNode->setVisible(false); mObjectNode->setPosition(1000, 0, 1000);}
+	if (mObjectNode->getPosition().z < -500.0f){ mObjectNode->setVisible(false);  mObjectNode->setPosition(1000, 0, 1000); }
+	if (mObjectNode->getPosition().x > 500.0f){ mObjectNode->setVisible(false);  mObjectNode->setPosition(1000, 0, 1000); }
+	if (mObjectNode->getPosition().x < -500.0f){ mObjectNode->setVisible(false);  mObjectNode->setPosition(1000, 0, 1000); }
 }

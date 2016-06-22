@@ -59,8 +59,10 @@ private:
 
   float mStageTime;
   float mSpawnTime;
+  float mSpawnTerm;
 
   int mBulletNum;
+  int mStageState;
 };
 
 

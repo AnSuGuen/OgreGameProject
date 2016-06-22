@@ -12,8 +12,9 @@ GameObject::~GameObject(void)
 
 void GameObject::connectScenegraph(Ogre::SceneManager* SceneMgr)
 {
-	mObjectNode = SceneMgr->getSceneNode("GameObjectRoot")->createChildSceneNode(ObjectNodeName, mPosition);
-	mObjectYaw = mObjectNode->createChildSceneNode(YawNodeName, mPosition);
+	mObjectNode = SceneMgr->getSceneNode("GameObjectRoot")->createChildSceneNode(ObjectNodeName);
+	mObjectNode->setPosition(mPosition);
+	mObjectYaw = mObjectNode->createChildSceneNode(YawNodeName);
 
 	mObjectEntity = SceneMgr->createEntity(EntityName, EntityFileName);
 	mObjectYaw->attachObject(mObjectEntity);
