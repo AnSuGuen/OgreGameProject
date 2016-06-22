@@ -27,6 +27,11 @@ void Bullet::animationStateSetting()
 	mAnimationState->setLoop(true);
 }
 
+void Bullet::setSpeed(int value)
+{
+	mSpeed = value;
+}
+
 void Bullet::frameStarted(GameManager* game, const Ogre::FrameEvent& evt, Ogre::Vector3 playerPos, int BulletType)
 {
 	if (mAnimationState->getEnabled())
@@ -37,16 +42,10 @@ void Bullet::frameStarted(GameManager* game, const Ogre::FrameEvent& evt, Ogre::
 	mObjectYaw->yaw(Ogre::Degree(90));
 	mObjectNode->translate(mDirection.normalisedCopy() * mSpeed * evt.timeSinceLastFrame);
 
-	if (1 < BulletType)
+	if (2 == BulletType)
 	{
 		if (mCountTime > 2.0f)
 		{
-			/* if (mDirection.z < 0) mDirection.z += 1.0f;
-			else mDirection.z += -1.0f;
-
-			if (mDirection.x < 0) mDirection.x += 1.0f;
-			else mDirection.x += -1.0f;*/
-
 			int randir = rand() % 4 + 1;
 			if (1 == randir)	mDirection.z += -1.0f;
 			else if(2 == randir) mDirection.x += -1.0f;
@@ -58,6 +57,17 @@ void Bullet::frameStarted(GameManager* game, const Ogre::FrameEvent& evt, Ogre::
 		}
 		mCountTime += evt.timeSinceLastFrame;
 	}
+	else if (3 == BulletType)
+	{
+		if (mCountTime > 3.0f && mCountTime < 3.5f)
+		{
+			mDirection = playerPos - mObjectNode->getPosition();
+			mSpeed = 500.0f;
+		}
+		if (mCountTime > 3.8f) { mSpeed = 100.0f; mCountTime = 0;}
+		mCountTime += evt.timeSinceLastFrame;
+	}
+	
 
 
 	if (mObjectNode->getPosition().z > 500.0f){ mObjectNode->setVisible(false); mObjectNode->setPosition(1000, 0, 1000);}

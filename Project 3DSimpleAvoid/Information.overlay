@@ -78,19 +78,6 @@ Overlay/Information
             colour_top 1 1 1
             colour_bottom 1 0 0
         }
-		element TextArea(Pos)
-        {
-            metrics_mode pixels
-            left 5
-            top -600
-            width 90
-            height 30
-            font_name Font/NanumBold18
-            char_height 30
-            caption BEST FPS:
-            colour_top 1 1 1
-            colour_bottom 0.8 0.8 0.8
-        }
 		element TextArea(Stage)
         {
             metrics_mode pixels
@@ -107,15 +94,15 @@ Overlay/Information
 		element TextArea(Coll)
         {
             metrics_mode pixels
-            left 5
-            top -100
+            left 10
+            top -30
             width 90
             height 30
             font_name Font/NanumBold18
             char_height 30
             caption BEST FPS:
-            colour_top 1 0 0
-            colour_bottom 1 1 1
+            colour_top 1 0 1
+            colour_bottom 0 0 0
         }
     }
 }

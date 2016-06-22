@@ -9,6 +9,7 @@ public:
 		Ogre::Vector3 Direction, Ogre::Vector3 pos);
 	~Bullet(void);
 	void animationStateSetting();
+	void setSpeed(int value);
 
 	void frameStarted(GameManager* game, const Ogre::FrameEvent& et, Ogre::Vector3 playerPos, int BulletType);
 

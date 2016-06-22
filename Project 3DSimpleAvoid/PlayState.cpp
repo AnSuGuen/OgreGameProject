@@ -1,6 +1,7 @@
 #include "PlayState.h"
 #include "TitleState.h"
 #include "GameOverState.h"
+#include "VictoryState.h"
 
 using namespace Ogre;
 
@@ -47,7 +48,8 @@ void PlayState::enter(void)
   mCollisionTime = -1.0f;
 
   mRedEffectTime = 0.0f;
-  mTitleOverlay2 = OverlayManager::getSingleton().getByName("Overlay/RedEffect");
+  mRedEffectOverlay = OverlayManager::getSingleton().getByName("Overlay/RedEffect");
+
 }
 
 void PlayState::exit(void)
@@ -62,6 +64,7 @@ void PlayState::exit(void)
 
 	mSceneMgr->clearScene();
 	mInformationOverlay->hide();
+	mRedEffectOverlay->hide();
 }
 
 void PlayState::pause(void)
@@ -81,7 +84,7 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 
 	if (mSpawnTime > mSpawnTerm)
 	{
-		for (int i = 0; i < 3 + mStageState; i++)
+		for (int i = 0; i < 3; i++)
 		{
 
 #define LEFT 0
@@ -113,6 +116,8 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			bullet.back()->animationStateSetting();
 			bullet.back()->mObjectYaw->setScale(10, 10, 10);
 			bullet.back()->mObjectYaw->yaw(Degree(90));
+
+			if (3 == mStageState) bullet.back()->setSpeed(100.0f);
 		}
 		mSpawnTime = 0;
 	}
@@ -126,18 +131,18 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 
 				player->setHp(player->getHp() - (rand() % 10 + mStageState));
 				mCollisionTime = 0.5f;
-
 				if (0 > player->getHp()) { game->changeState(GameOverState::getInstance()); break; }
 
-				mTitleOverlay2->show();
+				mRedEffectOverlay->show();
 				mRedEffectTime = 0;
+
 				break;
 			}
 		}
 	}
 
 	if (mRedEffectTime > 0.05f)
-		mTitleOverlay2->hide();
+		mRedEffectOverlay->hide();
 
 
 	for (int i = 0; i < bullet.size(); i++)
@@ -160,6 +165,7 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 		player->setHp(100);
 		mStageTime = 15.0f;
 		mStageState += 1;
+		if (mStageState > 5) { game->changeState(VictoryState::getInstance());}
 	}
 	return true;
 }
@@ -171,16 +177,14 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   static Ogre::DisplayString bestFps = L"최고 FPS: ";
   static Ogre::DisplayString worstFps = L"최저 FPS: ";
   static Ogre::DisplayString remainTime = L"남은시간: ";
-  static Ogre::DisplayString position = L"Pos : ";
   static Ogre::DisplayString stage = L"Stage";
-  static Ogre::DisplayString coll = L"HP : ";
+  static Ogre::DisplayString coll = L"HP: ";
 
   OverlayElement* guiAvg = OverlayManager::getSingleton().getOverlayElement("AverageFps");
   OverlayElement* guiCurr = OverlayManager::getSingleton().getOverlayElement("CurrFps");
   OverlayElement* guiBest = OverlayManager::getSingleton().getOverlayElement("BestFps");
   OverlayElement* guiWorst = OverlayManager::getSingleton().getOverlayElement("WorstFps");
   OverlayElement* guiTime = OverlayManager::getSingleton().getOverlayElement("Time");
-  OverlayElement* guiPos = OverlayManager::getSingleton().getOverlayElement("Pos");
   OverlayElement* guiStage = OverlayManager::getSingleton().getOverlayElement("Stage");
   OverlayElement* guiColl = OverlayManager::getSingleton().getOverlayElement("Coll");
 
@@ -191,11 +195,9 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS));
   guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS));
   guiTime->setCaption(remainTime + StringConverter::toString(mStageTime));
-  guiPos->setCaption(position + StringConverter::toString(player->mObjectNode->getPosition().x)
-	  + "  " + StringConverter::toString(player->mObjectNode->getPosition().z));
   guiStage->setCaption(stage + StringConverter::toString(mStageState));
 
-  guiColl->setCaption(coll + StringConverter::toString(player->getHp()));
+  guiColl->setCaption(coll + StringConverter::toString(player->getHp()) + "/" + StringConverter::toString(100));
 
   return true;
 }

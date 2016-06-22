@@ -64,8 +64,10 @@ private:
   int mBulletNum;
   int mStageState;
 
-  Ogre::Overlay* mTitleOverlay2;
+  Ogre::Overlay* mRedEffectOverlay;
   float mRedEffectTime;
+
+  Ogre::Overlay* mHp_barOverlay;
 };
 
 

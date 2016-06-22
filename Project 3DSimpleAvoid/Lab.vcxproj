@@ -205,6 +205,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="TitleState.cpp" />
+    <ClCompile Include="VictoryState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="resource.zip">
@@ -262,10 +263,12 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="TitleState.h" />
+    <ClInclude Include="VictoryState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Gameover.overlay" />
     <None Include="RedEffect.overlay" />
+    <None Include="Victory.overlay" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
