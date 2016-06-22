@@ -61,7 +61,7 @@ void PlayState::exit(void)
 		b->mObjectNode->setVisible(false);
 	}
 	bullet.clear();
-	player->setHp(100);
+	player->setHp(150);
 
 	mSceneMgr->clearScene();
 	mInformationOverlay->hide();
@@ -83,6 +83,7 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 	if (1 == mStageState) mSpawnTerm = 0.7f;
 	else if (2 == mStageState) mSpawnTerm = 0.5f;
 	else if (4 == mStageState) { mSpawnTerm = 0.9f; mAddSpawn = 3 + rand() % 3; }
+	else if (5 == mStageState) { mSpawnTerm = 0.5f; mAddSpawn = 3 + rand() % 3; }
 
 	if (mSpawnTime > mSpawnTerm)
 	{
@@ -133,8 +134,8 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			Ogre::AxisAlignedBox bulletBox = b->mObjectYaw->_getWorldAABB();
 			if (bulletBox.intersects(playerBox)){
 
-				if (4 != mStageState) player->setHp(player->getHp() - (rand() % 5 + 5));
-				else if (4 == mStageState) player->setHp(player->getHp() - 20);
+				if (4 != mStageState) player->setHp(player->getHp() - (rand() % 8 + 5));
+				else if (4 == mStageState) player->setHp(player->getHp() - 30);
 				mCollisionTime = 0.5f;
 				if (0 > player->getHp()) { game->changeState(GameOverState::getInstance()); break; }
 
@@ -155,7 +156,7 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 		mLightD->setVisible(false);
 
 		mLightS->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Y);
-		mLightS->setPosition(player->mObjectNode->getPosition().x, 500, player->mObjectNode->getPosition().z + 200);
+		mLightS->setPosition(player->mObjectNode->getPosition().x, 600, player->mObjectNode->getPosition().z + 100);
 		mLightS->setSpotlightRange(Degree(10), Degree(80));
 		mLightS->setVisible(true);
 	}
@@ -177,7 +178,7 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 		}
 		bullet.clear();
 
-		player->setHp(100);
+		player->setHp(150);
 		mStageTime = 15.0f;
 		mStageState += 1;
 		mAddSpawn = 0;
@@ -218,7 +219,7 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   guiTime->setCaption(remainTime + StringConverter::toString(mStageTime));
   guiStage->setCaption(stage + StringConverter::toString(mStageState));
 
-  guiColl->setCaption(coll + StringConverter::toString(player->getHp()) + "/" + StringConverter::toString(100));
+  guiColl->setCaption(coll + StringConverter::toString(player->getHp()) + "/" + StringConverter::toString(150));
 
   return true;
 }

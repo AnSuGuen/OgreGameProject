@@ -10,7 +10,7 @@ Player::Player(void)
 	mPosition = Ogre::Vector3(0, 0, 0);
 	mDirection = Ogre::Vector3(0, 0, 0);
 	Speed = 300.0f;
-	HP = 100.0f;
+	HP = 150.0f;
 }
 
 Player::~Player(void)
