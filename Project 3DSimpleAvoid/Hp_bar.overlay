@@ -1,0 +1,18 @@
+Overlay/Hp_bar
+{
+  zorder 100
+	container Panel(Hp_bar)
+	{
+		container Panel(Hp_bar2)
+		{
+			metrics_mode pixels
+			vert_align bottom
+			horz_align left
+			left 200
+			top -50
+			width 500
+			height 30
+			material Hp_bar
+		}
+	}
+}

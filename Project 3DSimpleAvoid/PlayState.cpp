@@ -50,6 +50,7 @@ void PlayState::enter(void)
   mRedEffectTime = 0.0f;
   mRedEffectOverlay = OverlayManager::getSingleton().getByName("Overlay/RedEffect");
 
+  mAddSpawn = 0;
 }
 
 void PlayState::exit(void)
@@ -81,10 +82,11 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 
 	if (1 == mStageState) mSpawnTerm = 0.7f;
 	else if (2 == mStageState) mSpawnTerm = 0.5f;
+	else if (4 == mStageState) { mSpawnTerm = 0.9f; mAddSpawn = 3 + rand() % 3; }
 
 	if (mSpawnTime > mSpawnTerm)
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 3 + mAddSpawn; i++)
 		{
 
 #define LEFT 0
@@ -118,6 +120,8 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			bullet.back()->mObjectYaw->yaw(Degree(90));
 
 			if (3 == mStageState) bullet.back()->setSpeed(100.0f);
+			if (4 == mStageState) bullet.back()->setSpeed(1800.0f);
+			if (5 == mStageState) bullet.back()->setSpeed(500.0f);
 		}
 		mSpawnTime = 0;
 	}
@@ -129,7 +133,8 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			Ogre::AxisAlignedBox bulletBox = b->mObjectYaw->_getWorldAABB();
 			if (bulletBox.intersects(playerBox)){
 
-				player->setHp(player->getHp() - (rand() % 10 + mStageState));
+				if (4 != mStageState) player->setHp(player->getHp() - (rand() % 5 + 5));
+				else if (4 == mStageState) player->setHp(player->getHp() - 20);
 				mCollisionTime = 0.5f;
 				if (0 > player->getHp()) { game->changeState(GameOverState::getInstance()); break; }
 
@@ -144,11 +149,20 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 	if (mRedEffectTime > 0.05f)
 		mRedEffectOverlay->hide();
 
+	if (5 == mStageState)
+	{ 
+		mSceneMgr->setAmbientLight(ColourValue(0.0f, 0.0f, 0.0f));
+		mLightD->setVisible(false);
+
+		mLightS->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Y);
+		mLightS->setPosition(player->mObjectNode->getPosition().x, 500, player->mObjectNode->getPosition().z + 200);
+		mLightS->setSpotlightRange(Degree(10), Degree(80));
+		mLightS->setVisible(true);
+	}
+
 
 	for (int i = 0; i < bullet.size(); i++)
-	{
 		bullet[i]->frameStarted(game, evt, player->mObjectNode->getPosition(), mStageState);
-	}
 
 	mSpawnTime += evt.timeSinceLastFrame;
 	mStageTime -= evt.timeSinceLastFrame;
@@ -162,9 +176,16 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			b->mObjectNode->setVisible(false);
 		}
 		bullet.clear();
+
 		player->setHp(100);
 		mStageTime = 15.0f;
 		mStageState += 1;
+		mAddSpawn = 0;
+
+		mSceneMgr->setAmbientLight(ColourValue(0.7f, 0.7f, 0.7f));
+		mLightD->setVisible(true);
+		mLightS->setVisible(false);
+
 		if (mStageState > 5) { game->changeState(VictoryState::getInstance());}
 	}
 	return true;
@@ -245,9 +266,6 @@ bool PlayState::mouseReleased(GameManager* game, const OIS::MouseEvent &e, OIS::
 
 bool PlayState::mouseMoved(GameManager* game, const OIS::MouseEvent &e)
 { 
-  //mCameraYaw->yaw(Degree(-e.state.X.rel));
-  //mCameraPitch->pitch(Degree(-e.state.Y.rel));
-  //mCameraHolder->translate(Ogre::Vector3(0, 0, -e.state.Z.rel * 0.1f));
   return true;
 }
 
@@ -262,6 +280,10 @@ void PlayState::_setLights(void)
   mLightD->setType(Light::LT_DIRECTIONAL);
   mLightD->setDirection( Vector3( 1, -2.0f, -1 ) );
   mLightD->setVisible(true);
+
+  mLightS = mSceneMgr->createLight("LightS");
+  mLightS->setType(Light::LT_SPOTLIGHT);
+  mLightS->setVisible(false);
 }
 
 void PlayState::_drawGroundPlane(void)

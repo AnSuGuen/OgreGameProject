@@ -68,6 +68,7 @@ private:
   float mRedEffectTime;
 
   Ogre::Overlay* mHp_barOverlay;
+  int mAddSpawn;
 };
 
 

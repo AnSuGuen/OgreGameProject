@@ -40,7 +40,16 @@ void Bullet::frameStarted(GameManager* game, const Ogre::FrameEvent& evt, Ogre::
 	mQuat = Ogre::Vector3(Ogre::Vector3::UNIT_Z).getRotationTo(mDirection);
 	mObjectYaw->setOrientation(mQuat);
 	mObjectYaw->yaw(Ogre::Degree(90));
-	mObjectNode->translate(mDirection.normalisedCopy() * mSpeed * evt.timeSinceLastFrame);
+	if (4 != BulletType)
+		mObjectNode->translate(mDirection.normalisedCopy() * mSpeed * evt.timeSinceLastFrame);
+	else if (4 == BulletType)
+	{
+		if (mCountTime > 2.0f)
+		{
+			mObjectNode->translate(mDirection.normalisedCopy() * mSpeed * evt.timeSinceLastFrame);
+		}
+		mCountTime += evt.timeSinceLastFrame;
+	}
 
 	if (2 == BulletType)
 	{
@@ -59,13 +68,17 @@ void Bullet::frameStarted(GameManager* game, const Ogre::FrameEvent& evt, Ogre::
 	}
 	else if (3 == BulletType)
 	{
-		if (mCountTime > 3.0f && mCountTime < 3.5f)
+		if (mCountTime > 3.0f && mCountTime < 3.3f)
 		{
 			mDirection = playerPos - mObjectNode->getPosition();
 			mSpeed = 500.0f;
 		}
-		if (mCountTime > 3.8f) { mSpeed = 100.0f; mCountTime = 0;}
+		if (mCountTime > 3.5f) { mSpeed = 100.0f; mCountTime = 0;}
 		mCountTime += evt.timeSinceLastFrame;
+	}
+	else if (5 == BulletType)
+	{
+
 	}
 	
 

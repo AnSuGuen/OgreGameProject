@@ -1,0 +1,18 @@
+Overlay/Victory
+{
+  zorder 100
+	container Panel(Victory)
+	{
+		container Panel(Victory2)
+		{
+		  metrics_mode relative
+		  vert_align center
+		  horz_align center
+		  top -0.5
+		  left -0.5
+		  height 1
+		  width 1
+		  material Victory
+		}
+	}
+}
