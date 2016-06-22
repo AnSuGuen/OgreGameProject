@@ -98,7 +98,7 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 
 			bullet.push_back(new Bullet(objname, yawname, entityname, "fish.mesh", dir, pos));
 			bullet.back()->connectScenegraph(mSceneMgr);
-			//bullet.back()->animationStateSetting();
+			bullet.back()->animationStateSetting();
 			bullet.back()->mObjectYaw->setScale(10, 10, 10);
 			bullet.back()->mObjectYaw->yaw(Degree(90));
 		}
@@ -111,7 +111,7 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 		{
 			Ogre::AxisAlignedBox bulletBox = b->mObjectYaw->_getWorldAABB();
 			if (bulletBox.intersects(playerBox)){
-				player->setHp(player->getHp()-1);
+				player->setHp(player->getHp()- (rand() % 3 + 1));
 				mCollisionTime = 1.0f;
 				break;
 			}
@@ -242,51 +242,62 @@ void PlayState::_setLights(void)
 
 void PlayState::_drawGroundPlane(void)
 {
-  Plane plane( Vector3::UNIT_Y, 0 );
-  MeshManager::getSingleton().createPlane(
-    "Ground", 
-    ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
-    plane,
-    1000,1000,
-    1,1,
-    true,1,5,5,
-    Vector3::NEGATIVE_UNIT_Z
-    );
+	Plane plane(Vector3::UNIT_Y, 0);
+	MeshManager::getSingleton().createPlane(
+		"Ground",
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+		plane,
+		40000, 40000,
+		1, 1,
+		true, 1, 1, 1,
+		Vector3::NEGATIVE_UNIT_Z
+		);
 
-  Entity* groundEntity = mSceneMgr->createEntity("GroundPlane", "Ground" );
-  mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
-  groundEntity->setMaterialName("");
-  groundEntity->setCastShadows(false);
+	Entity* SkyboxBack = mSceneMgr->createEntity("SkyboxBack", "Ground");
+	SkyboxBack->setMaterialName("water2");
+	SceneNode* Backnode = mSceneMgr->getRootSceneNode()->createChildSceneNode("SkyboxBack", Vector3(0.0f, -10000.0f, -20000.0f));
+	Backnode->attachObject(SkyboxBack);
+	Backnode->pitch(Degree(90));
+	SkyboxBack->setCastShadows(true);
+
+	Entity* SkyboxFront = mSceneMgr->createEntity("SkyboxFront", "Ground");
+	SkyboxFront->setMaterialName("water2");
+	SceneNode* Frontnode = mSceneMgr->getRootSceneNode()->createChildSceneNode("SkyboxFront", Vector3(0.0f, -10000.0f, 20000.0f));
+	Frontnode->attachObject(SkyboxFront);
+	Frontnode->pitch(Degree(-90));
+	Frontnode->yaw(Degree(180));
+	SkyboxFront->setCastShadows(true);
+
+	Entity* Skyboxleft = mSceneMgr->createEntity("Skyboxleft", "Ground");
+	Skyboxleft->setMaterialName("water2");
+	SceneNode* lefttnode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Skyboxleft", Vector3(20000.0f, -10000.0f, 0.0f));
+	lefttnode->attachObject(Skyboxleft);
+	lefttnode->roll(Degree(90));
+	lefttnode->yaw(Degree(-90));
+	Skyboxleft->setCastShadows(true);
+
+	Entity* SkyboxRight = mSceneMgr->createEntity("SkyboxRight", "Ground");
+	SkyboxRight->setMaterialName("water2");
+	SceneNode* rightnode = mSceneMgr->getRootSceneNode()->createChildSceneNode("SkyboxRight", Vector3(-20000.0f, -10000.0f, 0.0f));
+	rightnode->attachObject(SkyboxRight);
+	rightnode->roll(Degree(-90));
+	rightnode->yaw(Degree(-270));
+	SkyboxRight->setCastShadows(true);
+
+	Entity* SkyboxTop = mSceneMgr->createEntity("SkyboxTop", "Ground");
+	SkyboxTop->setMaterialName("water2");
+	SceneNode* topnode = mSceneMgr->getRootSceneNode()->createChildSceneNode("SkyboxTop", Vector3(0.0f, 10000.0f, 0.0f));
+	topnode->attachObject(SkyboxTop);
+	topnode->pitch(Degree(-180));
+	topnode->yaw(Degree(180));
+
+	Entity* SkyboxBottom = mSceneMgr->createEntity("SkyboxBottom", "Ground");
+	SkyboxBottom->setMaterialName("water2");
+	SceneNode* Bottomnode = mSceneMgr->getRootSceneNode()->createChildSceneNode("SkyboxBottom", Vector3(0.0f, -30000.0f, 0.0f));
+	Bottomnode->attachObject(SkyboxBottom);
+	Bottomnode->yaw(Degree(180));
 }
 
 void PlayState::_drawGridPlane(void)
 {
-  // ÁÂÇ¥Ãà Ç¥½Ã
-  Ogre::Entity* mAxesEntity = mSceneMgr->createEntity("Axes", "axes.mesh");
-  mSceneMgr->getRootSceneNode()->createChildSceneNode("AxesNode",Ogre::Vector3(0,0,0))->attachObject(mAxesEntity);
-  mSceneMgr->getSceneNode("AxesNode")->setScale(5, 5, 5);
-
-  Ogre::ManualObject* gridPlane =  mSceneMgr->createManualObject("GridPlane"); 
-  Ogre::SceneNode* gridPlaneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("GridPlaneNode"); 
-
-  Ogre::MaterialPtr gridPlaneMaterial = Ogre::MaterialManager::getSingleton().create("GridPlanMaterial","General"); 
-  gridPlaneMaterial->setReceiveShadows(false); 
-  gridPlaneMaterial->getTechnique(0)->setLightingEnabled(true); 
-  gridPlaneMaterial->getTechnique(0)->getPass(0)->setDiffuse(1,1,1,0); 
-  gridPlaneMaterial->getTechnique(0)->getPass(0)->setAmbient(1,1,1); 
-  gridPlaneMaterial->getTechnique(0)->getPass(0)->setSelfIllumination(1,1,1); 
-
-  gridPlane->begin("GridPlaneMaterial", Ogre::RenderOperation::OT_LINE_LIST); 
-  for(int i=0; i<21; i++)
-  {
-    gridPlane->position(-500.0f, 0.0f, 500.0f-i*50);
-    gridPlane->position(500.0f, 0.0f, 500.0f-i*50);
-
-    gridPlane->position(-500.f+i*50, 0.f, 500.0f);
-    gridPlane->position(-500.f+i*50, 0.f, -500.f);
-  }
-
-  gridPlane->end(); 
-
-  gridPlaneNode->attachObject(gridPlane);
 }

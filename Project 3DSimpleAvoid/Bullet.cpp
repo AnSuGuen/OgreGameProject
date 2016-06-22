@@ -21,15 +21,15 @@ Bullet::~Bullet(void)
 
 void Bullet::animationStateSetting()
 {
-	//mAnimationState = mObjectEntity->getAnimationState("Idle2");
-	//mAnimationState->setEnabled(true);
-	//mAnimationState->setLoop(true);
+	mAnimationState = mObjectEntity->getAnimationState("swim");
+	mAnimationState->setEnabled(true);
+	mAnimationState->setLoop(true);
 }
 
 void Bullet::frameStarted(GameManager* game, const Ogre::FrameEvent& evt, Ogre::Vector3 playerPos, int BulletType)
 {
-	//if (mAnimationState->getEnabled())
-	//	mAnimationState->addTime(evt.timeSinceLastFrame);
+	if (mAnimationState->getEnabled())
+		mAnimationState->addTime(evt.timeSinceLastFrame);
 
 	mQuat = Ogre::Vector3(Ogre::Vector3::UNIT_Z).getRotationTo(mDirection);
 	mObjectYaw->setOrientation(mQuat);
