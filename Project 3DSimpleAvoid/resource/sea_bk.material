@@ -1,0 +1,13 @@
+material sea_bk
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture sea_bk.png
+			}
+		}
+	}
+}

@@ -1,0 +1,13 @@
+material Title
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture Title.png
+			}
+		}
+	}
+}

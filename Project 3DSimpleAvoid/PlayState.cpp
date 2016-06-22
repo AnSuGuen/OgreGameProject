@@ -1,5 +1,6 @@
 #include "PlayState.h"
 #include "TitleState.h"
+#include "GameOverState.h"
 
 using namespace Ogre;
 
@@ -122,8 +123,11 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 		{
 			Ogre::AxisAlignedBox bulletBox = b->mObjectYaw->_getWorldAABB();
 			if (bulletBox.intersects(playerBox)){
+
 				player->setHp(player->getHp() - (rand() % 10 + mStageState));
 				mCollisionTime = 0.5f;
+
+				if (0 > player->getHp()) { game->changeState(GameOverState::getInstance()); break; }
 
 				mTitleOverlay2->show();
 				mRedEffectTime = 0;

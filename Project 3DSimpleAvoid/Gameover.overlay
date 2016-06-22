@@ -1,0 +1,18 @@
+Overlay/Gameover
+{
+  zorder 100
+	container Panel(Gameover)
+	{
+		container Panel(Gameover2)
+		{
+		  metrics_mode relative
+		  vert_align center
+		  horz_align center
+		  top -0.5
+		  left -0.5
+		  height 1
+		  width 1
+		  material Gameover
+		}
+	}
+}
