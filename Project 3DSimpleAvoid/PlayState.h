@@ -60,6 +60,7 @@ private:
   float mStageTime;
   float mSpawnTime;
   float mSpawnTerm;
+  float mCollisionTime;  
 
   int mBulletNum;
   int mStageState;

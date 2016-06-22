@@ -8,6 +8,9 @@ public:
 	Player(void);
 	~Player(void);
 	void animationStateSetting();
+
+	void setHp(int value);
+	float getHp();
 	
 	void frameStarted(GameManager* game, const Ogre::FrameEvent& et);
 
@@ -16,5 +19,6 @@ public:
 
 private:
 	float Speed;
+	float HP;
 };
 

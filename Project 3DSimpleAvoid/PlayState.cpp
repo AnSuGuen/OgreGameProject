@@ -34,12 +34,16 @@ void PlayState::enter(void)
   player = new Player;
   player->connectScenegraph(mSceneMgr);
   player->animationStateSetting();
+  player->mObjectNode->setScale(0.5, 0.5, 0.5);
   
   mStageTime = 15.0f;
   mSpawnTime = 0.0f;
   mSpawnTerm = 0;
+
   mBulletNum = 0;
   mStageState = 1;
+
+  mCollisionTime = -1.0f;
 }
 
 void PlayState::exit(void)
@@ -60,12 +64,8 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 {
 	player->frameStarted(game, evt);
 
-	if (1 == mStageState){
-		mSpawnTerm = 1.5f;
-	}
-	else if (2 == mStageState){
-		mSpawnTerm = 0.5f;
-	}
+	if (1 == mStageState) mSpawnTerm = 1.5f;
+	else if (2 == mStageState) mSpawnTerm = 0.5f;
 
 	if (mSpawnTime > mSpawnTerm)
 	{
@@ -99,41 +99,43 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			bullet.push_back(new Bullet(objname, yawname, entityname, "fish.mesh", dir, pos));
 			bullet.back()->connectScenegraph(mSceneMgr);
 			//bullet.back()->animationStateSetting();
-			bullet.back()->mObjectYaw->setScale(20, 20, 20);
+			bullet.back()->mObjectYaw->setScale(10, 10, 10);
 			bullet.back()->mObjectYaw->yaw(Degree(90));
 		}
 		mSpawnTime = 0;
 	}
+
+	if (mCollisionTime < 0.0f){
+		Ogre::AxisAlignedBox playerBox = player->mObjectYaw->_getWorldAABB();
+		for (auto b : bullet)
+		{
+			Ogre::AxisAlignedBox bulletBox = b->mObjectYaw->_getWorldAABB();
+			if (bulletBox.intersects(playerBox)){
+				player->setHp(player->getHp()-1);
+				mCollisionTime = 1.0f;
+				break;
+			}
+		}
+	}
+
 
 	for (int i = 0; i < bullet.size(); i++)
 	{
 		bullet[i]->frameStarted(game, evt, player->mObjectNode->getPosition(), 1);
 	}
 
-	/*auto p = std::remove_if(bullet.begin(), bullet.end(), [](Bullet* b) {
-		if (b->mObjectNode->getPosition().z > 2000.0f){ return true; }
-		else if (b->mObjectNode->getPosition().z < -5000.0f){ return true; }
-		else if (b->mObjectNode->getPosition().x > 2000.0f){ return true; }
-		else if (b->mObjectNode->getPosition().x < -2000.0f){ return true; }
-		else return false;
-		});*/
-
-	/*for (int i = 0; i < bullet.size(); i++){
-		if (bullet[i]->mObjectNode->getPosition().z > 500.0f){ delete bullet[i]->mObjectNode; continue;}
-		if (bullet[i]->mObjectNode->getPosition().z < -500.0f){ delete bullet[i]->mObjectNode; continue; }
-		if (bullet[i]->mObjectNode->getPosition().x > 500.0f){ delete bullet[i]->mObjectNode; continue; }
-		if (bullet[i]->mObjectNode->getPosition().x < -500.0f){ delete bullet[i]->mObjectNode; continue; }
-		}*/
-	//bullet.erase(p, bullet.end());
-
 	mSpawnTime += evt.timeSinceLastFrame;
 	mStageTime -= evt.timeSinceLastFrame;
-	if (0 > mStageTime){
-		for (auto b : bullet){
+	mCollisionTime -= evt.timeSinceLastFrame;
+	if (0 > mStageTime)
+	{
+		for (auto b : bullet)
+		{
 			b->mObjectNode->setPosition(1000, 0, 1000);
 			b->mObjectNode->setVisible(false);
 		}
 		bullet.clear();
+		player->setHp(100);
 		mStageTime = 15.0f;
 		mStageState += 1;
 	}
@@ -149,6 +151,7 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   static Ogre::DisplayString remainTime = L"남은시간: ";
   static Ogre::DisplayString position = L"Pos : ";
   static Ogre::DisplayString stage = L"Stage";
+  static Ogre::DisplayString coll = L"HP : ";
 
   OverlayElement* guiAvg = OverlayManager::getSingleton().getOverlayElement("AverageFps");
   OverlayElement* guiCurr = OverlayManager::getSingleton().getOverlayElement("CurrFps");
@@ -157,6 +160,7 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   OverlayElement* guiTime = OverlayManager::getSingleton().getOverlayElement("Time");
   OverlayElement* guiPos = OverlayManager::getSingleton().getOverlayElement("Pos");
   OverlayElement* guiStage = OverlayManager::getSingleton().getOverlayElement("Stage");
+  OverlayElement* guiColl = OverlayManager::getSingleton().getOverlayElement("Coll");
 
   const RenderTarget::FrameStats& stats = mRoot->getAutoCreatedWindow()->getStatistics();
 
@@ -168,6 +172,8 @@ bool PlayState::frameEnded(GameManager* game, const FrameEvent& evt)
   guiPos->setCaption(position + StringConverter::toString(player->mObjectNode->getPosition().x)
 	  + "  " + StringConverter::toString(player->mObjectNode->getPosition().z));
   guiStage->setCaption(stage + StringConverter::toString(mStageState));
+
+  guiColl->setCaption(coll + StringConverter::toString(player->getHp()));
 
   return true;
 }

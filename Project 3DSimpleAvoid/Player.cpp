@@ -10,6 +10,7 @@ Player::Player(void)
 	mPosition = Ogre::Vector3(0, 0, 0);
 	mDirection = Ogre::Vector3(0, 0, 0);
 	Speed = 300.0f;
+	HP = 100.0f;
 }
 
 Player::~Player(void)
@@ -21,6 +22,16 @@ void Player::animationStateSetting()
 	mAnimationState = mObjectEntity->getAnimationState("Idle");
 	mAnimationState->setEnabled(true);
 	mAnimationState->setLoop(true);
+}
+
+void Player::setHp(int value)
+{
+	HP = value;
+}
+
+float Player::getHp()
+{
+	return HP;
 }
 
 void Player::frameStarted(GameManager* game, const Ogre::FrameEvent& evt)
