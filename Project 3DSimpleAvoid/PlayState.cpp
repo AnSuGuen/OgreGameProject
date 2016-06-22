@@ -44,10 +44,21 @@ void PlayState::enter(void)
   mStageState = 1;
 
   mCollisionTime = -1.0f;
+
+  mRedEffectTime = 0.0f;
+  mTitleOverlay2 = OverlayManager::getSingleton().getByName("Overlay/RedEffect");
 }
 
 void PlayState::exit(void)
 {
+	for (auto b : bullet)
+	{
+		b->mObjectNode->setPosition(1000, 0, 1000);
+		b->mObjectNode->setVisible(false);
+	}
+	bullet.clear();
+	player->setHp(100);
+
 	mSceneMgr->clearScene();
 	mInformationOverlay->hide();
 }
@@ -64,12 +75,12 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 {
 	player->frameStarted(game, evt);
 
-	if (1 == mStageState) mSpawnTerm = 1.5f;
+	if (1 == mStageState) mSpawnTerm = 0.7f;
 	else if (2 == mStageState) mSpawnTerm = 0.5f;
 
 	if (mSpawnTime > mSpawnTerm)
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 3 + mStageState; i++)
 		{
 
 #define LEFT 0
@@ -91,10 +102,10 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 			Ogre::Vector3 dir;
 			Ogre::Vector3 pos;
 
-			if (LEFT == randDirection){ dir = Ogre::Vector3(1, 0, 0); pos = Ogre::Vector3(-500.0f, 100, randPosition); }
-			else if (RIGHT == randDirection){ dir = Ogre::Vector3(-1, 0, 0); pos = Ogre::Vector3(500.0f, 100, randPosition); }
-			else if (UP == randDirection){ dir = Ogre::Vector3(0, 0, 1);  pos = Ogre::Vector3(randPosition, 100, -500.0f); }
-			else if (DOWN == randDirection){ dir = Ogre::Vector3(0, 0, -1);  pos = Ogre::Vector3(randPosition, 100, 500.0f); }
+			if (LEFT == randDirection){ dir = Ogre::Vector3(1, 0, 0); pos = Ogre::Vector3(-500.0f, 50, randPosition); }
+			else if (RIGHT == randDirection){ dir = Ogre::Vector3(-1, 0, 0); pos = Ogre::Vector3(500.0f, 50, randPosition); }
+			else if (UP == randDirection){ dir = Ogre::Vector3(0, 0, 1);  pos = Ogre::Vector3(randPosition, 50, -500.0f); }
+			else if (DOWN == randDirection){ dir = Ogre::Vector3(0, 0, -1);  pos = Ogre::Vector3(randPosition, 50, 500.0f); }
 
 			bullet.push_back(new Bullet(objname, yawname, entityname, "fish.mesh", dir, pos));
 			bullet.back()->connectScenegraph(mSceneMgr);
@@ -111,22 +122,29 @@ bool PlayState::frameStarted(GameManager* game, const FrameEvent& evt)
 		{
 			Ogre::AxisAlignedBox bulletBox = b->mObjectYaw->_getWorldAABB();
 			if (bulletBox.intersects(playerBox)){
-				player->setHp(player->getHp()- (rand() % 3 + 1));
-				mCollisionTime = 1.0f;
+				player->setHp(player->getHp() - (rand() % 10 + mStageState));
+				mCollisionTime = 0.5f;
+
+				mTitleOverlay2->show();
+				mRedEffectTime = 0;
 				break;
 			}
 		}
 	}
 
+	if (mRedEffectTime > 0.05f)
+		mTitleOverlay2->hide();
+
 
 	for (int i = 0; i < bullet.size(); i++)
 	{
-		bullet[i]->frameStarted(game, evt, player->mObjectNode->getPosition(), 1);
+		bullet[i]->frameStarted(game, evt, player->mObjectNode->getPosition(), mStageState);
 	}
 
 	mSpawnTime += evt.timeSinceLastFrame;
 	mStageTime -= evt.timeSinceLastFrame;
 	mCollisionTime -= evt.timeSinceLastFrame;
+	mRedEffectTime += evt.timeSinceLastFrame;
 	if (0 > mStageTime)
 	{
 		for (auto b : bullet)

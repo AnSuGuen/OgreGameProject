@@ -17,6 +17,6 @@ private:
 
 	float mSpeed;
 	float mAccel;
-	int mCountTime;
+	float mCountTime;
 };
 

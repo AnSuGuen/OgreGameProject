@@ -54,7 +54,6 @@ private:
   Ogre::Overlay* mInformationOverlay;
 
   Player* player;
-  //Bullet* bullet;
   std::vector<Bullet*> bullet;
 
   float mStageTime;
@@ -64,6 +63,9 @@ private:
 
   int mBulletNum;
   int mStageState;
+
+  Ogre::Overlay* mTitleOverlay2;
+  float mRedEffectTime;
 };
 
 

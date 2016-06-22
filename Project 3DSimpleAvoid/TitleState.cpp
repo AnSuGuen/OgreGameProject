@@ -9,11 +9,7 @@ void TitleState::enter(void)
 {
   mContinue = true;
   mTitleOverlay = OverlayManager::getSingleton().getByName("Overlay/Title");
-  //mStartMsg = OverlayManager::getSingleton().getOverlayElement("StartMsg");
   mTitleOverlay->show();
-  //mStartMsg->show();
-  //mRedBox = OverlayManager::getSingleton().getOverlayElement("RedBox");
-  //mRedBox->show();
 }
 
 void TitleState::exit(void)
@@ -33,19 +29,6 @@ void TitleState::resume(void)
 
 bool TitleState::frameStarted(GameManager* game, const FrameEvent& evt)
 {
-  /*static float elapsed = 0.0f;
-
-  elapsed += evt.timeSinceLastFrame;
-
-  if ((int)(elapsed * 4) % 2)
-  {
-    mStartMsg->show();
-  }
-  else
-  {
-    mStartMsg->hide();
-  }*/
-
   return true;
 }
 

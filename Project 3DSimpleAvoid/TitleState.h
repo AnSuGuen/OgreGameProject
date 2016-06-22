@@ -34,5 +34,5 @@ private:
 
   Ogre::Overlay* mTitleOverlay;
   //Ogre::OverlayElement* mStartMsg;
-  Ogre::OverlayElement* mRedBox;
+  //Ogre::OverlayElement* mRedBox;
 };
